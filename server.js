@@ -1,7 +1,9 @@
 import express from 'express';
 import conectarAoBanco from './src/config/dbConfig.js';
 
-await conectarAoBanco(process.env.STRING_CONEXAO)
+//console.log(process.env.STRING_CONEXAO)
+//const conexao = await conectarAoBanco(process.env.STRING_CONEXAO);
+const conexao = await conectarAoBanco(process.env.STRING_CONEXAO)
 
 const posts = [
     
@@ -18,7 +20,14 @@ app.listen(3000, () =>{
     console.log('Servidor escutando...');
 });
 
-app.get('/posts', (req, res) => {
+async function getTodosPosts() {
+    const db = conexao.db('imersao-instabytes')
+    const colecao = db.collection('posts')
+    return colecao.find().toArray()
+}
+
+app.get('/posts', async (req, res) => {
+    const posts = await getTodosPosts()
     res.status(200).json(posts);
 });
 
